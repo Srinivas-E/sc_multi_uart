@@ -24,11 +24,21 @@ typedef struct STRUCT_MULTI_UART_TX_PORTS
 {
     buffered out port:8 pUart;
 } s_multi_uart_tx_ports;
+typedef struct STRUCT_MULTI_UART_CTS
+{
+	in port cts;
+}
+port_cts;
 #else
 typedef struct STRUCT_MULTI_UART_TX_PORTS
 {
     unsigned pUart;
 } s_multi_uart_tx_ports;
+typedef struct STRUCT_MULTI_UART_CTS
+{
+    unsigned cts;
+} port_cts;
+
 #endif
 
 /**
@@ -95,6 +105,8 @@ int uart_tx_put_char( int channel_id, unsigned int uart_char );
  * Multi UART Transmit function
  */
 void run_multi_uart_tx( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports), clock uart_clock);
+
+void run_multi_uart_tx1( streaming chanend cUART, REFERENCE_PARAM(s_multi_uart_tx_ports, tx_ports), clock uart_clock, REFERENCE_PARAM(port_cts, cts));
 
 /**
  * Pause the Multi-UART TX task for reconfiguration

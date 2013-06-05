@@ -11,7 +11,7 @@
 /* define UART_CORE for Motor Control Board as 1 */
 #define UART_CORE   1
 #define BUFFER_SIZE 23971
-
+on tile[1]: port_cts cts= {XS1_PORT_8C};
 on tile[1]: s_multi_uart_tx_ports uart_tx_ports = { XS1_PORT_8B };
 on tile[1]: s_multi_uart_rx_ports uart_rx_ports = { XS1_PORT_8A };
 /* Define 1 bit external clock */
@@ -188,7 +188,6 @@ int main(void)
         on stdcore[UART_CORE]: dummy();
         on stdcore[UART_CORE]: dummy();
         on stdcore[UART_CORE]: dummy();
-        on stdcore[UART_CORE]: dummy();
         
         #ifdef SIMPLE_TEST
         /* TX test thread */
@@ -200,7 +199,7 @@ int main(void)
         
         
         /* run the multi-uart RX & TX with a common external clock - (2 threads) */
-        on tile[UART_CORE]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, clk_uart_rx,p_uart_ref_ext_clk , clk_uart_tx);
+        on tile[UART_CORE]: run_multi_uart_rxtx( cTxUART,  uart_tx_ports, cRxUART, uart_rx_ports, clk_uart_rx,p_uart_ref_ext_clk , clk_uart_tx, cts);
     }
     return 0;
 }
