@@ -196,14 +196,13 @@ void run_multi_uart_tx1( streaming chanend cUART, s_multi_uart_tx_ports &tx_port
 	    }
 
 	}
-	printint(clocks_per_bit[0]);
 
 	port_val = idle_val;
 
 	/* initialise port */
 	tx_ports.pUart <: port_val @ port_ts;
 	port_ts += 20;
-	printstr("using new function");
+	printstr("using HFC module");
 
 	while (1)
 	{
@@ -247,12 +246,49 @@ void run_multi_uart_tx1( streaming chanend cUART, s_multi_uart_tx_ports &tx_port
 
 		    	else if((ct1==0)&&(current_word_pos[i]==0))
 		    	{
-		    		port_val|=1<<i;
+		    		 switch(uart_tx_channel[i].polarity_mode)
+		    			    {
+		    			        case start_0: port_val |= (1<<i); break;
+		    			        case start_1: port_val &= ~(1<<i); break;
+		    			        default: port_val |= (1<<i); break;
+		    			    }
 		    	tick_count[i]++;
 
 		    	}
-		    }
 
+		    }
+		    select
+		   		    {
+		   		        #pragma xta endpoint "tx_bit_ep1"
+		   		        case cUART :> int v: // anything here will pause the TX thread
+
+		   		            /* set port to IDLE */
+		   		            port_val = 0xffffffff;
+		   		            tx_ports.pUart <: port_val;
+
+		   		            /* allow otherside to hold us while we wait */
+		   		            cUART <: (char)MULTI_UART_GO;
+		   		            cUART :> int _;
+
+		   		            /* initialise data structures */
+		   		            for (int i = 0; i < UART_TX_CHAN_COUNT; i++)
+		   		            {
+		   		                current_word[i] = 0;
+		   		                current_word_pos[i] = 0; // disable channel
+		   		                tick_count[i] = 0;
+		   		                uart_tx_channel[i].wr_ptr = 0;
+		   		                uart_tx_channel[i].rd_ptr = 0;
+		   		                uart_tx_channel[i].nelements = 0;
+		   		                clocks_per_bit[i] = uart_tx_channel[i].clocks_per_bit;
+		   		            }
+
+		   		            /* initialise port */
+		   		            tx_ports.pUart <: port_val @ port_ts;
+		   		            port_ts += 20;
+		   		            break;
+		   		        default:
+		   		            break;
+		   		    }
 
     }
 }
