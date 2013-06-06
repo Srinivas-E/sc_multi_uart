@@ -18,6 +18,8 @@ USED_MODULES = module_multi_uart
 # xcc for the final link (mapping) stage.
 XCC_FLAGS_Debug = -O0 -g
 XCC_FLAGS_Release = -O2 -g
+XCC_FLAGS = -g -O3 -fxscope
+
 
 # The VERBOSE variable, if set to 1, enables verbose output from the make system.
 VERBOSE = 0

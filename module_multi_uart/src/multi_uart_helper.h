@@ -59,5 +59,7 @@ void send_streaming_token( streaming_chanend c, char i );
  * @return          token received over channel
  */
 char get_streaming_token( streaming_chanend c );
+void write_to_file(unsigned char file_name[], unsigned char buffer[], unsigned int buf_size);
+void read_from_file(unsigned char file_name[], unsigned char buffer[], unsigned int buf_size);
 
 #endif /* __MULTI_UART_HELPER_H__ */

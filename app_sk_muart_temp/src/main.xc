@@ -8,9 +8,11 @@
 #include <stdlib.h>
 #include <syscall.h>
 
+#include <xscope.h>
+
 /* define UART_CORE for Motor Control Board as 1 */
 #define UART_CORE   1
-#define BUFFER_SIZE 23971
+#define BUFFER_SIZE 11500
 on tile[1]: port_cts cts= {XS1_PORT_8C};
 on tile[1]: s_multi_uart_tx_ports uart_tx_ports = { XS1_PORT_8B };
 on tile[1]: s_multi_uart_rx_ports uart_rx_ports = { XS1_PORT_8A };
@@ -25,6 +27,14 @@ on tile[1]: clock clk_uart_rx = XS1_CLKBLK_5;
 #define SIMPLE_TEST
 
 
+
+
+void do_print (void) {
+
+     printf("the buffering stopped \n" );
+
+   return;
+}
 
 /**
  * Basic test of the TX server - will transmit an identifying message on each UART channel
@@ -45,8 +55,8 @@ void uart_tx_test(streaming chanend cUART)
     unsigned char readBuffer[BUFFER_SIZE];
 
     char temp = 0;
-    int chan_id = 0;
-    unsigned baud_rate = 115200;
+    int chan_id = 1;
+    unsigned baud_rate = 9600;
     int buffer_space = 0;
     
     timer t;
@@ -83,9 +93,7 @@ void uart_tx_test(streaming chanend cUART)
 
        buffer_space = uart_tx_put_char(chan_id, (unsigned int)readBuffer[rd_ptr[chan_id]]); //(unsigned int)test_str[chan_id][rd_ptr[chan_id]]);
        if (buffer_space != -1)
-
-
-               rd_ptr[chan_id]++;
+       { rd_ptr[chan_id]++;}
 
    }
 }
@@ -100,7 +108,7 @@ void uart_rx_test(streaming chanend cUART)
     char receive_buf[100] = {'u'};
     char go;
     unsigned int buf_ptr = 0;
-    unsigned baud_rate = 115200;
+    unsigned baud_rate = 9600;
     int fd1;
     
     timer t;

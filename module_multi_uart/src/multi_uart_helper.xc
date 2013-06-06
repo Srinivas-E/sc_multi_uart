@@ -1,5 +1,7 @@
 #include <xs1.h>
 
+#include <print.h>
+
 
 unsigned get_time( timer t )
 {
@@ -52,4 +54,3 @@ char get_streaming_token( streaming chanend c )
     
     return i;
 }
-
